@@ -123,6 +123,32 @@ claude-code-flow/
         └── refactor.md   # Refactoring guidance
 ```
 
+## See It In Action
+
+Starting a new greenfield project with `/flow`:
+
+**Step 1: Choose work category**
+
+![Work category selection](.github/assets/screen1.png)
+
+**Step 2: Select specific type**
+
+![Build type selection](.github/assets/screen2.png)
+
+**Step 3: Define purpose**
+
+![Purpose selection](.github/assets/screen3.png)
+
+**Step 4: Complexity assessment & document selection**
+
+![Complexity and documents](.github/assets/screen4.png)
+
+**Step 5: Context created, workflow begins**
+
+![Workflow initialized](.github/assets/screen5.png)
+
+The context directory is created, documents are initialized, and Claude begins Phase 1 with architecture decisions tailored to your project.
+
 ## License
 
 MIT License - use however you want.
