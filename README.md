@@ -149,6 +149,10 @@ Starting a new greenfield project with `/flow`:
 
 The context directory is created, documents are initialized, and Claude begins Phase 1 with architecture decisions tailored to your project.
 
+## Related
+
+- [claude-code-wisdom](https://github.com/andrasp/claude-code-wisdom) - Distilled software engineering wisdom for your CLAUDE.md
+
 ## License
 
 MIT License - use however you want.
