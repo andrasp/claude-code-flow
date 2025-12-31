@@ -12,11 +12,11 @@ Extends the research → plan → implement paradigm, keeping Claude laser focus
 
 The `/flow` command initiates structured workflows that:
 
-- **Reduce interruptions** - Claude explores the codebase first instead of front-loading you with questions
-- **Persist context across sessions** - work survives conversation resets and session timeouts
-- **Resume seamlessly** - return days later and pick up exactly where you left off
-- **Organize work** - consistent directory structures under `docs/context/`
-- **Track progress** - standardized documents (plan, research, tasks, outcome) keep everything in one place
+- **Defeat Claude's amnesia** - context persists in documentation that survives session resets, context compaction, and timeouts
+- **Resume instantly** - reference a `docs/context/` path and pick up exactly where you left off, even days later
+- **Stay on track** - phased workflows (understand → plan → implement → complete) with validation checkpoints prevent drift
+- **Get tailored guidance** - type-specific workflows for features, bugfixes, refactors, integrations, and more
+- **Reduce cognitive load** - Claude explores your codebase first, only asking questions when genuinely blocked
 
 ## What's Included
 
@@ -71,11 +71,13 @@ docs/context/
         └── outcome.md
 ```
 
-Standard documents (you choose which optional ones to create):
-- **plan.md** - Implementation plan, goals, success criteria [Required]
-- **research.md** - Analysis and findings [Optional]
-- **tasks.md** - Task tracking with checkboxes [Optional]
-- **outcome.md** - Results and lessons learned [Optional]
+Standard documents:
+- **plan.md** - Implementation plan, goals, success criteria
+- **research.md** - Analysis and findings from codebase exploration
+- **tasks.md** - Task tracking with checkboxes
+- **outcome.md** - Results and lessons learned
+
+For simple tasks, you may skip documents that wouldn't add value - but most workflows benefit from all four.
 
 Additional documents can be created as needed (e.g., `api_design.md`, `notes.md`, `diagrams.md`).
 
