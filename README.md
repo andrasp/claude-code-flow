@@ -25,6 +25,10 @@ The `/flow` command initiates structured workflows that:
   - Phase-by-phase guidance: understanding → planning → implementation → completion
   - Progressive disclosure: Claude sees only what's relevant to the current phase
   - Work-type specific: tailored guidance for features, refactors, optimizations, etc.
+- **`detect-workflow` hook** - automatically injects guidance based on what you're doing
+  - Applies work-type principles even outside formal `/flow` sessions
+  - Say "fix the login bug" and bugfix guidance applies automatically
+  - Opportunistic refactoring mid-task? Refactor principles kick in
 
 ## Work Types
 
@@ -83,7 +87,11 @@ Additional documents can be created as needed (e.g., `api_design.md`, `notes.md`
 
 ## Auto-Activation
 
-The flow-skill automatically activates when you reference a `docs/context/` path (e.g., "let's continue working on docs/context/bugfix/2025-01-18_login-timeout"). Claude detects the work type from the directory path and loads the appropriate guidance.
+Two mechanisms ensure guidance is always available:
+
+**Skill activation** - The flow-skill activates when you reference a `docs/context/` path (e.g., "let's continue working on docs/context/bugfix/2025-01-18_login-timeout"). Claude detects the work type from the directory path and loads the appropriate guidance.
+
+**Hook detection** - The detect-workflow hook analyzes every prompt for work-type keywords and injects relevant guidance automatically. This means you get bugfix principles when fixing bugs, refactor guidance when restructuring code, etc. - even without starting a formal `/flow` session. See [hooks/README.md](hooks/README.md) for technical details.
 
 ## Installation
 
@@ -91,11 +99,37 @@ Clone this repo and symlink to your Claude Code configuration:
 
 ```bash
 git clone https://github.com/andrasp/claude-code-flow.git
-ln -s /path/to/claude-code-flow/commands ~/.claude/commands
-ln -s /path/to/claude-code-flow/skills ~/.claude/skills
+
+# Command and skill
+ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
+ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
+
+# Hook (optional but recommended)
+mkdir -p ~/.claude/hooks
+ln -s /path/to/claude-code-flow/hooks/detect-workflow.py ~/.claude/hooks/detect-workflow.py
 ```
 
-Start a new conversation and the commands and skills will be available.
+To enable the hook, add to your `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/detect-workflow.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Start a new conversation and the commands, skills, and hook will be available.
 
 ## Usage
 
@@ -112,17 +146,20 @@ Start a new conversation and the commands and skills will be available.
 ```
 claude-code-flow/
 ├── commands/
-│   └── flow.md           # /flow slash command
-└── skills/
-    └── flow-skill/
-        ├── SKILL.md      # Main skill definition
-        ├── bugfix.md     # Bugfix guidance
-        ├── feature.md    # Feature development guidance
-        ├── greenfield.md # Greenfield project guidance
-        ├── integration.md # Integration guidance
-        ├── optimization.md # Optimization guidance
-        ├── custom.md     # General workflow, user-defined focus
-        └── refactor.md   # Refactoring guidance
+│   └── flow.md              # /flow slash command
+├── skills/
+│   └── flow-skill/
+│       ├── SKILL.md         # Main skill definition
+│       ├── bugfix.md        # Bugfix guidance
+│       ├── feature.md       # Feature development guidance
+│       ├── greenfield.md    # Greenfield project guidance
+│       ├── integration.md   # Integration guidance
+│       ├── optimization.md  # Optimization guidance
+│       ├── custom.md        # General workflow, user-defined focus
+│       └── refactor.md      # Refactoring guidance
+└── hooks/
+    ├── README.md             # Hook technical documentation
+    └── detect-workflow.py    # Auto-detect work type from prompts
 ```
 
 ## See It In Action
