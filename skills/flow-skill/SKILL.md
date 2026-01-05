@@ -36,6 +36,49 @@ When the user references a context path:
 | Bugfix | `docs/context/bugfix/` | [bugfix.md](bugfix.md) |
 | Custom | `docs/context/custom/` | [custom.md](custom.md) |
 
+## Searching Past Flows
+
+During active work, users may ask about past flows:
+- "Have I done something like this before?"
+- "What patterns did I use for authentication?"
+- "Show me past work on caching"
+- "How did I handle X last time?"
+
+**When you detect a search-like question:**
+
+1. **Spawn a search subagent** (Task with subagent_type="Explore") to search `docs/context/`:
+
+```
+Search past flows for: "<extracted query>"
+
+1. Grep for keywords across docs/context/**/plan.md and outcome.md
+2. For matches, extract Overview/Goals from plan.md and Summary/Lessons from outcome.md
+3. Note path (contains type, date, topic) and status (has outcome.md = completed)
+4. Return only genuinely relevant matches (max 5), sorted by relevance then recency
+5. If nothing is truly relevant, say so - don't force matches
+6. Do NOT return raw file contents - summarize
+```
+
+2. **Present results** with citations:
+
+```
+Found 2 past flows related to "[query]":
+
+1. **feature/2024-12-15_user-auth** (completed)
+   Goal: Implement JWT authentication
+   Outcome: Used refresh token rotation, noted cookie handling gotchas
+
+2. **bugfix/2024-11-20_session-timeout** (completed)
+   Goal: Fix premature session expiration
+   Outcome: Root cause was timezone mismatch in token validation
+
+Want me to dive deeper into any of these?
+```
+
+3. **If user wants details**, read the full plan.md and outcome.md from that flow and summarize relevant insights.
+
+**Why subagent:** Searching past flows can involve grepping many files. Doing this in the main session pollutes context with raw search output. The subagent does the heavy lifting and returns only the summary.
+
 ## Core Documents
 
 Workflows use these documents (user chooses which optional ones to create):

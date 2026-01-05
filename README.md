@@ -20,12 +20,18 @@ The `/flow` command initiates structured workflows that:
 
 ## What's Included
 
-- **`/flow` command** - initiates new workflows, infers work type from your description
-- **`flow-skill` skill** - auto-activates when you reference a context directory path
+- **`/flow` command** - Initiates new workflows, infers work type from your description
+  - Automatically searches past flows for related work before starting
+  - Offers to review relevant patterns and lessons from previous work
+- **`/flow-search` command** - Search past flows for context, patterns, and lessons
+  - Finds relevant past work by keyword
+  - Surfaces lessons learned from completed flows
+- **`flow-skill` skill** - Auto-activates when you reference a context directory path
   - Phase-by-phase guidance: understanding → planning → implementation → completion
   - Progressive disclosure: Claude sees only what's relevant to the current phase
   - Work-type specific: tailored guidance for features, refactors, optimizations, etc.
-- **`detect-workflow` hook** - automatically injects guidance based on what you're doing
+  - Answers "Have I done this before?" queries by searching past flows
+- **`detect-workflow` hook** - Automatically injects guidance based on what you're doing
   - Applies work-type principles even outside formal `/flow` sessions
   - Say "fix the login bug" and bugfix guidance applies automatically
   - Opportunistic refactoring mid-task? Refactor principles kick in
@@ -100,8 +106,9 @@ Clone this repo and symlink to your Claude Code configuration:
 ```bash
 git clone https://github.com/andrasp/claude-code-flow.git
 
-# Command and skill
+# Commands and skill
 ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
+ln -s /path/to/claude-code-flow/commands/flow-search.md ~/.claude/commands/flow-search.md
 ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
 
 # Hook (optional but recommended)
@@ -134,11 +141,18 @@ Start a new conversation and the commands, skills, and hook will be available.
 ## Usage
 
 ```bash
-# Interactive mode - shows work type menu
+# Start a new workflow (interactive mode)
 /flow
 
-# With description - infers work type
+# Start with description - infers work type, searches for related past work
 /flow add user authentication to the API
+
+# Search past flows for relevant context
+/flow-search authentication
+/flow-search caching patterns
+
+# Resume previous work
+continue docs/context/feature/2025-01-15_user-auth
 ```
 
 ## Repository Structure
@@ -146,7 +160,8 @@ Start a new conversation and the commands, skills, and hook will be available.
 ```
 claude-code-flow/
 ├── commands/
-│   └── flow.md              # /flow slash command
+│   ├── flow.md              # /flow slash command
+│   └── flow-search.md       # /flow-search slash command
 ├── skills/
 │   └── flow-skill/
 │       ├── SKILL.md         # Main skill definition

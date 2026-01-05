@@ -70,7 +70,50 @@ If the user provided a description, you likely have enough to start exploring. D
 
 If the user already provided this in their description, proceed to exploration.
 
-## Step 3: Assess Complexity
+## Step 3: Search for Related Past Work
+
+**Before creating a new context directory, check if relevant past work exists.**
+
+Spawn a Task agent with subagent_type="Explore" to quickly search `docs/context/` for related flows. The subagent should:
+
+1. Extract keywords from the user's description
+2. Grep for matches across `docs/context/**/plan.md` and `docs/context/**/outcome.md`
+3. For matches, extract Overview/Goals from plan.md and Summary/Lessons from outcome.md
+4. Return only genuinely relevant matches (max 5), or "no related flows found" if nothing relevant
+
+**Subagent prompt:**
+```
+Quick search for past flows related to: "<user's description>"
+
+Search docs/context/**/plan.md and outcome.md for keyword matches.
+For matches, extract: path, goal (from plan.md), outcome (if exists).
+Return only genuinely relevant matches (max 5), or "no related flows found".
+Don't force matches - if nothing is truly relevant, say so.
+Be concise - this is a quick check, not deep analysis.
+```
+
+**If related flows found:**
+
+Present to user:
+```
+I found [N] potentially related past flows:
+
+1. **[type]/[date]_[topic]** - [one-line goal summary]
+2. ...
+
+Would you like me to review any of these for relevant patterns before we proceed?
+- Yes, review [specific one or all]
+- No, start fresh
+```
+
+If user wants to review:
+- Read the full plan.md and outcome.md from selected flow(s)
+- Summarize relevant patterns, decisions, and lessons
+- Then proceed to Step 4
+
+If user declines or no matches found, proceed directly to Step 4.
+
+## Step 4: Assess Complexity
 
 Evaluate the work and provide an assessment:
 
@@ -83,7 +126,7 @@ Would you like to enter **plan mode** for deeper exploration before implementati
 
 Regardless of their choice, you will create a plan.md document. Plan mode just determines whether Claude does extensive exploration first.
 
-## Step 4: Create Context Directory
+## Step 5: Create Context Directory
 
 Get the current date from system time and create a short topic slug from the description.
 
@@ -105,7 +148,7 @@ Categories map to work types:
 
 Use the Write tool to create the directory by creating the first file.
 
-## Step 5: Choose Documents
+## Step 6: Choose Documents
 
 Use the AskUserQuestion tool (with multiSelect enabled) to ask which optional documents to create:
 
@@ -117,7 +160,7 @@ Which documents do you want? (plan.md is always created)
 - outcome.md - For recording results when done
 ```
 
-## Step 6: Initialize Documents
+## Step 7: Initialize Documents
 
 Create the selected documents in the context directory.
 
@@ -202,7 +245,7 @@ Create the selected documents in the context directory.
 [What we learned for future work]
 ```
 
-## Step 7: Begin Workflow
+## Step 8: Begin Workflow
 
 After creating the context directory and documents, transition to the type-specific workflow by invoking the appropriate guidance from the flow skill.
 
