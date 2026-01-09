@@ -7,6 +7,31 @@ argument-hint: [optional description of what you want to work on]
 
 You are initiating a structured development workflow. This command helps organize work with consistent documentation practices and type-specific guidance.
 
+## Step -1: Check for Autonomous Mode
+
+**If `--autonomous` flag is present:**
+
+1. Check if autonomous hooks are configured in the user's project:
+   - `.claude/hooks/permission-handler.sh` exists?
+   - `.claude/hooks/stop-handler.sh` exists?
+   - `.claude/settings.json` has hook configuration?
+
+2. **If not configured (first-time setup):**
+   - Create hooks directory in user's project
+   - Write hook scripts from templates in the autonomous-skill
+   - Update settings.json with hook configuration
+   - Make scripts executable
+   - Tell user: "Autonomous mode configured. Please restart with `claude --resume` to continue."
+   - Exit (hooks require session restart to load)
+
+3. **If already configured:**
+   - Create marker file to enable autonomous mode
+   - Load Oversight Agent guidance from the autonomous-skill
+   - Proceed with flow in autonomous mode
+   - At completion: signal completion via marker file
+
+**See the autonomous-skill for hook templates, Oversight Agent guidance, and decision logging.**
+
 ## Step 0: Check for Roadmap Reference
 
 **If the user references a roadmap item** (e.g., `--roadmap RM-001`, `work on RM-001`, or mentions an RM-XXX ID):

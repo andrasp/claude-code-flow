@@ -39,6 +39,10 @@ The `/flow` command initiates structured workflows that:
   - Natural language: "X depends on Y", "what should I work on next?"
   - Auto-activates when discussing priorities, dependencies, or work items
   - Links to flows: `/flow --roadmap RM-001` connects work to strategic items
+- **`autonomous-skill` skill** - Unattended flow execution (experimental)
+  - Run flows to completion without human intervention
+  - Oversight Agent makes judgment calls normally requiring human input
+  - Auto-configures hooks on first use; logs all autonomous decisions
 - **`flow-skill` skill** - Auto-activates when you reference a context directory path
   - Phase-by-phase guidance: understanding → planning → implementation → completion
   - Progressive disclosure: Claude sees only what's relevant to the current phase
@@ -142,6 +146,45 @@ Two mechanisms ensure guidance is always available:
 
 **Hook detection** - The detect-workflow hook analyzes every prompt for work-type keywords and injects relevant guidance automatically. This means you get bugfix principles when fixing bugs, refactor guidance when restructuring code, etc. - even without starting a formal `/flow` session. See [hooks/README.md](hooks/README.md) for technical details.
 
+## Autonomous Mode (Experimental)
+
+Run flows to completion without human intervention. An Oversight Agent makes judgment calls that would normally require human input.
+
+**Normal Flow** (human validation at each phase):
+```mermaid
+flowchart LR
+    U1[Understanding] --> H1((👤)) --> P1[Planning] --> H2((👤)) --> I1[Implementation] --> H3((👤)) --> C1[Complete]
+```
+
+**Autonomous Flow** (oversight agent):
+```mermaid
+flowchart LR
+    U2[Understanding] --> A1((🤖)) --> P2[Planning] --> A2((🤖)) --> I2[Implementation] --> A3((🤖)) --> C2[Complete]
+```
+
+### When to Use
+
+| Good Candidates | Poor Candidates |
+|-----------------|-----------------|
+| Well-defined tasks with clear acceptance criteria | Ambiguous requirements |
+| Tasks similar to previously completed flows | High-risk changes (payments, auth, data migrations) |
+| Lower-risk changes (non-critical systems) | Novel architectural decisions |
+| After-hours or async work | Security-sensitive changes |
+
+### How It Works
+
+```bash
+/flow feature "add user profiles" --autonomous
+```
+
+First run configures hooks in your project (`.claude/hooks/`). These hooks auto-allow permissions and reinject prompts until completion. A marker file (`.claude/.autonomous-mode`) controls active state. Session restart required after initial setup since hooks load at start.
+
+The Oversight Agent makes decisions at phase boundaries: approving transitions when documentation is sufficient, following CLAUDE.md preferences for implementation choices, and auto-remediating Critical/High validation findings (max 3 attempts). When genuinely ambiguous, it exits autonomous mode and asks the human.
+
+All decisions are logged in `autonomous-log.md` within the flow's context directory.
+
+See [autonomous-skill/SKILL.md](skills/autonomous-skill/SKILL.md) for full details.
+
 ## Installation
 
 Clone this repo and symlink to your Claude Code configuration:
@@ -157,6 +200,7 @@ ln -s /path/to/claude-code-flow/commands/validate.md ~/.claude/commands/validate
 ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
 ln -s /path/to/claude-code-flow/skills/roadmap-skill ~/.claude/skills/roadmap-skill
 ln -s /path/to/claude-code-flow/skills/validation-skill ~/.claude/skills/validation-skill
+ln -s /path/to/claude-code-flow/skills/autonomous-skill ~/.claude/skills/autonomous-skill
 
 # Hook (optional but recommended)
 mkdir -p ~/.claude/hooks
@@ -210,6 +254,9 @@ continue docs/context/feature/2025-01-15_user-auth
 /flow-roadmap depends RM-004 --on RM-001   # Add dependency
 /flow --roadmap RM-001                     # Start flow linked to roadmap item
 
+# Autonomous execution (experimental)
+/flow feature "add logout button" --autonomous  # Run unattended
+
 # Review your current changes
 /validate                        # Reviews uncommitted changes
 /validate src/auth/              # Reviews specific files or directories
@@ -236,6 +283,8 @@ claude-code-flow/
 │   │   └── refactor.md      # Refactoring guidance
 │   ├── roadmap-skill/
 │   │   └── SKILL.md         # Conversational work planning
+│   ├── autonomous-skill/
+│   │   └── SKILL.md         # Unattended execution with Oversight Agent
 │   └── validation-skill/
 │       ├── SKILL.md         # Orchestrates parallel reviewers
 │       └── reviewers/
