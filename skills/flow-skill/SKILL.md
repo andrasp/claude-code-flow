@@ -86,18 +86,59 @@ Workflows use these documents (user chooses which optional ones to create):
 | Document | Purpose | Usage |
 |----------|---------|-------|
 | `plan.md` | Implementation plan, goals, success criteria | **Required** - Always created |
+| `outcome.md` | Record of changes, learnings, and extracted memory | **Required** - Created at start, updated continuously |
 | `research.md` | Analysis, findings, raw data | Optional - User chooses |
 | `tasks.md` | Granular task tracking with checkboxes | Optional - User chooses |
-| `outcome.md` | Record of completed work, lessons learned | Optional - User chooses |
+
+### Outcome Template
+
+Create `outcome.md` at flow start with this structure:
+
+```markdown
+# Outcome
+
+## Status
+🟡 In Progress
+
+## Summary
+[To be filled as work progresses]
+
+## Changes Made
+[Updated incrementally during implementation]
+
+## Learnings Extracted
+[Filled during finalization]
+
+## Next Steps
+[Discovered during implementation]
+```
+
+**Update outcome.md continuously** during implementation - not just at the end. After each significant change, add to "Changes Made" and note any patterns or gotchas discovered.
 
 ## Workflow Phases
 
 All work types follow this general structure with human validation at each boundary:
 
 ### Phase 1: Understanding
+
+**First, check accumulated memory (if it exists):**
+If `docs/context/.memory/` exists, read the files for relevant context:
+- `patterns.md` - Established patterns to follow
+- `lessons.md` - Mistakes to avoid (especially high-severity ones)
+- `gotchas.md` - Non-obvious issues in this area
+- `architecture.md` - High-level structure
+- `conventions.md` - Coding standards
+
+Extract entries relevant to this task's keywords and area. Use this context to inform exploration.
+
+If `.memory/` doesn't exist yet, skip this step - it will be created during your first flow completion.
+
+**Then explore:**
 - Clarify requirements and scope
 - Explore relevant codebase areas (use hierarchical exploration for large codebases)
 - Document findings in research.md
+
+**Also create outcome.md** with the standard template at this point.
 
 **→ Validate with user:** Does this understanding match reality? Any corrections before planning?
 
@@ -111,15 +152,51 @@ All work types follow this general structure with human validation at each bound
 ### Phase 3: Implementation
 - Execute tasks systematically
 - Update tasks.md as work progresses
+- **Update outcome.md after each significant change** - add to "Changes Made", note any patterns/gotchas discovered
 - Maintain quality standards
 - Run self-review before completion
 
 **→ Validate with user:** Does implementation match the plan? Any drift detected?
 
 ### Phase 4: Completion
+
+**Finalize outcome.md:**
 - Verify success criteria met
-- Document outcomes in outcome.md
-- Capture lessons learned
+- Polish the Summary section (should already have content from continuous updates)
+- Update Status to ✅ Complete
+
+**Extract learnings to memory:**
+Analyze the work done and identify learnings for `docs/context/.memory/`:
+
+1. **Patterns discovered** - Design patterns, architectural patterns, conventions observed
+   → Append to `patterns.md` with flow reference and confidence level
+2. **Lessons learned** - Mistakes made, unexpected issues, "aha moments"
+   → Append to `lessons.md` with severity level
+3. **Gotchas encountered** - Non-obvious issues, environment quirks
+   → Append to `gotchas.md`
+4. **Architecture insights** - New understanding of system structure
+   → Update `architecture.md` if significant
+5. **Conventions noticed** - Coding standards observed
+   → Append to `conventions.md`
+
+Check existing entries to avoid duplicates. If similar entry exists, update its confidence level instead.
+
+**Fill in "Learnings Extracted" section of outcome.md:**
+```markdown
+## Learnings Extracted
+
+### Added to Memory
+- **patterns.md**: [what was added, or "nothing new"]
+- **lessons.md**: [what was added, or "nothing new"]
+- **gotchas.md**: [what was added, or "nothing new"]
+- **architecture.md**: [what was added, or "nothing new"]
+- **conventions.md**: [what was added, or "nothing new"]
+
+### Rationale
+[If nothing extracted: "Routine implementation following established patterns"]
+```
+
+A flow is not properly complete if the "Learnings Extracted" section is missing or unfilled.
 
 ## Working Style: Explore First
 

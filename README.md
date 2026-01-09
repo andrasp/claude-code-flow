@@ -14,6 +14,7 @@ The `/flow` command initiates structured workflows that:
 
 - **Defeat Claude's amnesia** - context persists in documentation that survives session resets, context compaction, and timeouts
 - **Resume instantly** - reference a `docs/context/` path and pick up exactly where you left off, even days later
+- **Learn from past work** - patterns, lessons, and gotchas accumulate in `.memory/` and inform future flows
 - **Stay on track** - phased workflows (understand → plan → implement → complete) with validation checkpoints prevent drift
 - **Get tailored guidance** - type-specific workflows for features, bugfixes, refactors, integrations, and more
 - **Reduce cognitive load** - Claude explores your codebase first, only asking questions when genuinely blocked
@@ -48,12 +49,36 @@ The `/flow` command initiates structured workflows that:
 | **Bugfix** | Fix a specific issue or defect |
 | **Custom** | User-defined focus; doesn't fit above categories |
 
+## Memory System
+
+Flow learns from your work. The `.memory/` directory accumulates knowledge across flows:
+
+```
+docs/context/.memory/
+├── patterns.md      # Reusable solutions (auth strategy, error handling, etc.)
+├── lessons.md       # What worked, what didn't
+├── architecture.md  # System structure insights
+├── conventions.md   # Naming, file organization, code style
+└── gotchas.md       # Project-specific pitfalls
+```
+
+**How it works:**
+- **Flow start**: Claude reads `.memory/` to inform understanding and planning
+- **Flow end**: Lessons and patterns are extracted to `.memory/` for future flows
+- **Invisible infrastructure**: You don't manage it directly; Claude reads/writes automatically
+
+The memory is project-specific and should be gitignored (it's your project's learned context, not part of the framework).
+
 ## Context Directory Structure
 
 Each workflow automatically creates and maintains a timestamped directory with standardized documents:
 
 ```
 docs/context/
+├── .memory/                              # Accumulated knowledge (see above)
+│   ├── patterns.md
+│   ├── lessons.md
+│   └── ...
 ├── feature/
 │   ├── 2025-01-15_user-authentication/
 │   │   ├── plan.md
