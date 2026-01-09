@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A structured but flexible development workflow system for Claude Code. Guides you through feature development, refactoring, optimization, greenfield projects, and bugfixes with consistent documentation practices.
+A structured workflow system for Claude Code. Guides you through feature development, refactoring, optimization, greenfield projects, and bugfixes with consistent documentation practices.
 
 Extends the research → plan → implement paradigm, keeping Claude laser focused on relevant context while solving the chronic amnesia problem in long sessions.
 
@@ -19,41 +19,24 @@ The `/flow` command initiates structured workflows that:
 - **Get tailored guidance** - type-specific workflows for features, bugfixes, refactors, integrations, and more
 - **Reduce cognitive load** - Claude explores your codebase first, only asking questions when genuinely blocked
 
-## What's Included
 
-- **`/flow` command** - Initiates new workflows, infers work type from your description
-  - Automatically searches past flows for related work before starting
-  - Offers to review relevant patterns and lessons from previous work
-- **`/flow-search` command** - Search past flows for context, patterns, and lessons
-  - Finds relevant past work by keyword
-  - Surfaces lessons learned from completed flows
-- **`/flow-roadmap` command** - Manage strategic work backlog
-  - Prioritized items with dependencies and progress tracking
-  - Subcommands: list, add, show, next, block, complete, stats
-- **`/validate` command** - Invokes multi-lens code review on your changes
-- **`validation-skill` skill** - Parallel specialist reviewers for comprehensive code review
-  - 7 reviewers: security, architecture, quality, performance, scalability, testing, error-handling
-  - Runs automatically before flow completion, or manually anytime via `/validate`
-  - Aggregates findings by severity, auto-remediates critical/high issues
-- **`roadmap-skill` skill** - Conversational work planning
-  - Natural language: "X depends on Y", "what should I work on next?"
-  - Auto-activates when discussing priorities, dependencies, or work items
-  - Links to flows: `/flow --roadmap RM-001` connects work to strategic items
-- **`autonomous-skill` skill** - Unattended flow execution (experimental)
-  - Run flows to completion without human intervention
-  - Oversight Agent makes judgment calls normally requiring human input
-  - Auto-configures hooks on first use; logs all autonomous decisions
-- **`flow-skill` skill** - Auto-activates when you reference a context directory path
-  - Phase-by-phase guidance: understanding → planning → implementation → completion
-  - Progressive disclosure: Claude sees only what's relevant to the current phase
-  - Work-type specific: tailored guidance for features, refactors, optimizations, etc.
-  - Answers "Have I done this before?" queries by searching past flows
-- **`detect-workflow` hook** - Automatically injects guidance based on what you're doing
-  - Applies work-type principles even outside formal `/flow` sessions
-  - Say "fix the login bug" and bugfix guidance applies automatically
-  - Opportunistic refactoring mid-task? Refactor principles kick in
+## Core Workflow
 
-## Work Types
+### How It Works
+
+Every flow follows the same phased structure with human validation at each boundary:
+
+1. **Research** - Explore the codebase, read documentation, search the web, check databases - whatever sources are relevant. Trace data flows, identify integration points, understand existing patterns. Ask questions when genuine ambiguity remains. Document findings in `research.md`.
+
+2. **Planning** - Define the implementation approach based on what you learned. Break work into concrete tasks with clear acceptance criteria. Document in `plan.md` (goals, approach, success criteria) and `tasks.md` (checkboxes for tracking).
+
+3. **Implementation** - Execute tasks one by one, updating `tasks.md` as you go. Follow established codebase patterns. Keep changes focused - don't refactor unrelated code.
+
+4. **Review-Improve Loop** - Run `/validate` to trigger 7 parallel reviewers (security, architecture, quality, performance, scalability, testing, error-handling). Fix Critical/High issues and revalidate. Loop until clean or user overrides.
+
+5. **Completion** - Verify all success criteria are met. Document results in `outcome.md` including what was accomplished, files changed, and lessons learned. Extract patterns and insights to `.memory/` for future flows.
+
+### Work Types
 
 | Type | When to Use |
 |------|-------------|
@@ -65,9 +48,47 @@ The `/flow` command initiates structured workflows that:
 | **Bugfix** | Fix a specific issue or defect |
 | **Custom** | User-defined focus; doesn't fit above categories |
 
-## Memory System
+### Context Directory
 
-Flow learns from your work. The `.memory/` directory accumulates knowledge across flows:
+Each workflow creates a timestamped directory with standardized documents:
+
+```
+docs/context/
+├── .memory/                              # Cross-session learning (see Memory System)
+├── roadmap/                              # Strategic backlog (see Roadmap)
+├── feature/
+│   └── 2025-01-15_user-authentication/
+│       ├── plan.md                       # Goals, approach, success criteria
+│       ├── research.md                   # Analysis and findings
+│       ├── tasks.md                      # Progress tracking
+│       └── outcome.md                    # Results and lessons
+├── bugfix/
+├── optimization/
+└── refactor/
+```
+
+### Auto-Activation
+
+Two mechanisms ensure guidance is always available:
+
+**Skill activation** - The flow-skill activates when you reference a `docs/context/` path (e.g., "let's continue working on docs/context/bugfix/2025-01-18_login-timeout"). Claude detects the work type from the directory path and loads the appropriate guidance.
+
+**Hook detection** - The detect-workflow hook analyzes every prompt for work-type keywords and injects relevant guidance automatically. Say "fix the login bug" and bugfix guidance applies - even without starting a formal `/flow` session.
+
+### Searching Past Work
+
+Find relevant context from previous flows:
+
+```bash
+/flow-search authentication
+/flow-search "caching patterns"
+```
+
+Returns matching flows with their goals, outcomes, and lessons learned. Useful for checking "have I done this before?" or finding patterns to reuse. You can dive deeper into any result or resume a previous flow directly.
+
+### Memory System
+
+Flow learns from your work. The `.memory/` directory accumulates knowledge across flows - patterns discovered, lessons learned, gotchas encountered. Claude reads it at the start of each flow and writes to it at the end. You never interact with it directly.
 
 ```
 docs/context/.memory/
@@ -81,88 +102,41 @@ docs/context/.memory/
 **How it works:**
 - **Flow start**: Claude reads `.memory/` to inform understanding and planning
 - **Flow end**: Lessons and patterns are extracted to `.memory/` for future flows
-- **Invisible infrastructure**: You don't manage it directly; Claude reads/writes automatically
+- **Invisible**: You don't manage it directly; Claude reads/writes automatically
 
-The memory is project-specific and should be gitignored (it's your project's learned context, not part of the framework).
+The memory is project-specific and should be gitignored.
 
-## Context Directory Structure
+## Validation
 
-Each workflow automatically creates and maintains a timestamped directory with standardized documents:
+Multi-lens code review through **parallel specialist reviewers**, each examining changes through a different lens.
 
-```
-docs/context/
-├── .memory/                              # Accumulated knowledge (see above)
-│   ├── patterns.md
-│   ├── lessons.md
-│   └── ...
-├── roadmap/                              # Strategic work backlog
-│   ├── index.md                          # Overview and counts
-│   ├── items/                            # Individual roadmap items
-│   │   ├── RM-001_user-auth.md
-│   │   └── RM-002_api-v2.md
-│   └── archive/                          # Completed items
-├── feature/
-│   ├── 2025-01-15_user-authentication/
-│   │   ├── plan.md
-│   │   ├── research.md
-│   │   ├── tasks.md
-│   │   ├── outcome.md
-│   │   └── api_design.md
-│   └── 2025-01-22_export-api/
-│       ├── plan.md
-│       └── tasks.md
-├── bugfix/
-│   └── 2025-01-18_login-timeout/
-│       ├── plan.md
-│       └── research.md
-├── optimization/
-│   └── 2025-01-20_query-performance/
-│       ├── plan.md
-│       ├── research.md
-│       └── tasks.md
-└── refactor/
-    └── 2025-01-10_payment-module/
-        ├── plan.md
-        ├── research.md
-        ├── tasks.md
-        └── outcome.md
+```bash
+/validate                        # Reviews uncommitted changes
+/validate src/auth/              # Reviews specific files or directories
 ```
 
-Standard documents:
-- **plan.md** - Implementation plan, goals, success criteria
-- **research.md** - Analysis and findings from codebase exploration
-- **tasks.md** - Task tracking with checkboxes
-- **outcome.md** - Results and lessons learned
+**7 Reviewers:**
+| Reviewer | Focus |
+|----------|-------|
+| Security | Vulnerabilities, injection, auth issues |
+| Architecture | Design patterns, coupling, layer violations |
+| Quality | Duplication, naming, complexity, CLAUDE.md compliance |
+| Performance | Algorithms, queries, bottlenecks |
+| Scalability | Concurrency, state, distributed concerns |
+| Testing | Coverage, test quality, edge cases |
+| Error Handling | Robustness, graceful degradation |
 
-For simple tasks, you may skip documents that wouldn't add value - but most workflows benefit from all four.
-
-Additional documents can be created as needed (e.g., `api_design.md`, `notes.md`, `diagrams.md`).
-
-## Auto-Activation
-
-Two mechanisms ensure guidance is always available:
-
-**Skill activation** - The flow-skill activates when you reference a `docs/context/` path (e.g., "let's continue working on docs/context/bugfix/2025-01-18_login-timeout"). Claude detects the work type from the directory path and loads the appropriate guidance.
-
-**Hook detection** - The detect-workflow hook analyzes every prompt for work-type keywords and injects relevant guidance automatically. This means you get bugfix principles when fixing bugs, refactor guidance when restructuring code, etc. - even without starting a formal `/flow` session. See [hooks/README.md](hooks/README.md) for technical details.
+Findings are aggregated by severity (Critical > High > Medium > Low). Critical/High issues can be auto-remediated. Runs automatically before flow completion, or manually anytime via `/validate`.
 
 ## Autonomous Mode (Experimental)
 
 Run flows to completion without human intervention. An Oversight Agent makes judgment calls that would normally require human input.
 
-**Normal Flow** (human validation at each phase):
-```mermaid
-flowchart LR
-    U1[Understanding] --> H1((👤)) --> P1[Planning] --> H2((👤)) --> I1[Implementation] --> H3((👤)) --> C1[Complete]
+```bash
+/flow feature "add user profiles" --autonomous
 ```
 
-**Autonomous Flow** (oversight agent):
-```mermaid
-flowchart LR
-    U2[Understanding] --> A1((🤖)) --> P2[Planning] --> A2((🤖)) --> I2[Implementation] --> A3((🤖)) --> C2[Complete]
-```
-
-### When to Use
+#### When to Use
 
 | Good Candidates | Poor Candidates |
 |-----------------|-----------------|
@@ -171,11 +145,7 @@ flowchart LR
 | Lower-risk changes (non-critical systems) | Novel architectural decisions |
 | After-hours or async work | Security-sensitive changes |
 
-### How It Works
-
-```bash
-/flow feature "add user profiles" --autonomous
-```
+#### How It Works
 
 First run configures hooks in your project (`.claude/hooks/`). These hooks auto-allow permissions and reinject prompts until completion. A marker file (`.claude/.autonomous-mode`) controls active state. Session restart required after initial setup since hooks load at start.
 
@@ -185,6 +155,132 @@ All decisions are logged in `autonomous-log.md` within the flow's context direct
 
 See [autonomous-skill/SKILL.md](skills/autonomous-skill/SKILL.md) for full details.
 
+## Extensions
+
+Optional features that work independently of `/flow` but integrate with it.
+
+### Roadmap
+
+Strategic work planning above individual flows. While `/flow` manages isolated pieces of work, `/flow-roadmap` manages the **strategic backlog** - a prioritized list with dependencies and progress tracking.
+
+```bash
+/flow-roadmap                              # Show overview
+/flow-roadmap list --priority=P0,P1        # List high priority items
+/flow-roadmap add "User authentication"    # Add new item
+/flow-roadmap next                         # What should I work on?
+/flow-roadmap depends RM-004 --on RM-001   # Add dependency
+/flow --roadmap RM-001                     # Start flow linked to roadmap item
+```
+
+Natural language works too: "X depends on Y", "what's most important?", "the API work is blocked".
+
+Roadmap items live in `docs/context/roadmap/` with priorities (P0-P3), effort estimates (XS-XL), dependencies, and acceptance criteria. When flows complete, linked roadmap items update automatically.
+
+## Usage
+
+```bash
+# Start a new workflow
+/flow
+/flow add user authentication to the API
+
+# Search past flows
+/flow-search authentication
+/flow-search caching patterns
+
+# Resume previous work
+continue docs/context/feature/2025-01-15_user-auth
+
+# Strategic planning
+/flow-roadmap
+/flow-roadmap next
+/flow --roadmap RM-001
+
+# Code review
+/validate
+/validate src/auth/
+
+# Autonomous execution
+/flow feature "add logout button" --autonomous
+```
+
+## Repository Structure
+
+```
+claude-code-flow/
+├── commands/
+│   ├── flow.md              # /flow - start workflows
+│   ├── flow-search.md       # /flow-search - find past work
+│   ├── flow-roadmap.md      # /flow-roadmap - strategic planning
+│   └── validate.md          # /validate - code review
+├── skills/
+│   ├── flow-skill/          # Core workflow guidance
+│   │   ├── SKILL.md
+│   │   ├── bugfix.md
+│   │   ├── feature.md
+│   │   ├── greenfield.md
+│   │   ├── integration.md
+│   │   ├── optimization.md
+│   │   ├── refactor.md
+│   │   └── custom.md
+│   ├── roadmap-skill/       # Strategic planning
+│   │   └── SKILL.md
+│   ├── validation-skill/    # Multi-lens code review
+│   │   ├── SKILL.md
+│   │   └── reviewers/
+│   │       ├── security.md
+│   │       ├── architecture.md
+│   │       ├── quality.md
+│   │       ├── performance.md
+│   │       ├── scalability.md
+│   │       ├── testing.md
+│   │       └── error-handling.md
+│   └── autonomous-skill/    # Unattended execution
+│       └── SKILL.md
+└── hooks/
+    ├── README.md
+    └── detect-workflow.py
+```
+
+## See It In Action
+
+Starting a new greenfield project with `/flow`:
+
+**Step 1: Choose work category**
+
+![Work category selection](.github/assets/screen1.png)
+
+**Step 2: Select specific type**
+
+![Build type selection](.github/assets/screen2.png)
+
+**Step 3: Define purpose**
+
+![Purpose selection](.github/assets/screen3.png)
+
+**Step 4: Complexity assessment & document selection**
+
+![Complexity and documents](.github/assets/screen4.png)
+
+**Step 5: Context created, workflow begins**
+
+![Workflow initialized](.github/assets/screen5.png)
+
+The context directory is created, documents are initialized, and Claude begins Phase 1 with architecture decisions tailored to your project.
+
+## Quick Start
+
+```bash
+# Clone and symlink
+git clone https://github.com/andrasp/claude-code-flow.git
+ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
+ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
+
+# Start a new Claude Code session, then:
+/flow add user authentication to the API
+```
+
+See [Installation](#installation) for full setup including extensions.
+
 ## Installation
 
 Clone this repo and symlink to your Claude Code configuration:
@@ -192,12 +288,14 @@ Clone this repo and symlink to your Claude Code configuration:
 ```bash
 git clone https://github.com/andrasp/claude-code-flow.git
 
-# Commands and skills
+# Core (required)
 ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
 ln -s /path/to/claude-code-flow/commands/flow-search.md ~/.claude/commands/flow-search.md
+ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
+
+# Extensions (optional)
 ln -s /path/to/claude-code-flow/commands/flow-roadmap.md ~/.claude/commands/flow-roadmap.md
 ln -s /path/to/claude-code-flow/commands/validate.md ~/.claude/commands/validate.md
-ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
 ln -s /path/to/claude-code-flow/skills/roadmap-skill ~/.claude/skills/roadmap-skill
 ln -s /path/to/claude-code-flow/skills/validation-skill ~/.claude/skills/validation-skill
 ln -s /path/to/claude-code-flow/skills/autonomous-skill ~/.claude/skills/autonomous-skill
@@ -228,103 +326,6 @@ To enable the hook, add to your `~/.claude/settings.json`:
 ```
 
 Start a new conversation and the commands, skills, and hook will be available.
-
-## Usage
-
-```bash
-# Start a new workflow (interactive mode)
-/flow
-
-# Start with description - infers work type, searches for related past work
-/flow add user authentication to the API
-
-# Search past flows for relevant context
-/flow-search authentication
-/flow-search caching patterns
-
-# Resume previous work
-continue docs/context/feature/2025-01-15_user-auth
-
-# Manage strategic roadmap
-/flow-roadmap                              # Show overview
-/flow-roadmap list --priority=P0,P1        # List high priority items
-/flow-roadmap add "User authentication"    # Add new item
-/flow-roadmap next                         # What should I work on?
-/flow-roadmap block RM-003 "waiting specs" # Mark item blocked
-/flow-roadmap depends RM-004 --on RM-001   # Add dependency
-/flow --roadmap RM-001                     # Start flow linked to roadmap item
-
-# Autonomous execution (experimental)
-/flow feature "add logout button" --autonomous  # Run unattended
-
-# Review your current changes
-/validate                        # Reviews uncommitted changes
-/validate src/auth/              # Reviews specific files or directories
-```
-
-## Repository Structure
-
-```
-claude-code-flow/
-├── commands/
-│   ├── flow.md              # /flow slash command
-│   ├── flow-search.md       # /flow-search slash command
-│   ├── flow-roadmap.md      # /flow-roadmap slash command
-│   └── validate.md          # /validate slash command
-├── skills/
-│   ├── flow-skill/
-│   │   ├── SKILL.md         # Main skill definition
-│   │   ├── bugfix.md        # Bugfix guidance
-│   │   ├── feature.md       # Feature development guidance
-│   │   ├── greenfield.md    # Greenfield project guidance
-│   │   ├── integration.md   # Integration guidance
-│   │   ├── optimization.md  # Optimization guidance
-│   │   ├── custom.md        # General workflow, user-defined focus
-│   │   └── refactor.md      # Refactoring guidance
-│   ├── roadmap-skill/
-│   │   └── SKILL.md         # Conversational work planning
-│   ├── autonomous-skill/
-│   │   └── SKILL.md         # Unattended execution with Oversight Agent
-│   └── validation-skill/
-│       ├── SKILL.md         # Orchestrates parallel reviewers
-│       └── reviewers/
-│           ├── security.md      # Vulnerabilities, injection, auth
-│           ├── architecture.md  # Design patterns, coupling, layers
-│           ├── quality.md       # Duplication, naming, complexity
-│           ├── performance.md   # Algorithms, queries, bottlenecks
-│           ├── scalability.md   # Concurrency, state, distributed
-│           ├── testing.md       # Coverage, test quality, edge cases
-│           └── error-handling.md # Robustness, graceful degradation
-└── hooks/
-    ├── README.md             # Hook technical documentation
-    └── detect-workflow.py    # Auto-detect work type from prompts
-```
-
-## See It In Action
-
-Starting a new greenfield project with `/flow`:
-
-**Step 1: Choose work category**
-
-![Work category selection](.github/assets/screen1.png)
-
-**Step 2: Select specific type**
-
-![Build type selection](.github/assets/screen2.png)
-
-**Step 3: Define purpose**
-
-![Purpose selection](.github/assets/screen3.png)
-
-**Step 4: Complexity assessment & document selection**
-
-![Complexity and documents](.github/assets/screen4.png)
-
-**Step 5: Context created, workflow begins**
-
-![Workflow initialized](.github/assets/screen5.png)
-
-The context directory is created, documents are initialized, and Claude begins Phase 1 with architecture decisions tailored to your project.
 
 ## Related
 
