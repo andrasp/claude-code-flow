@@ -273,6 +273,40 @@ Results are aggregated by severity (Critical > High > Medium > Low). Critical is
 
 See `/validate` command and `skills/validation-skill/` for implementation details.
 
+## Roadmap Integration
+
+Flows can be linked to roadmap items for strategic tracking. Use `/flow-roadmap` to manage the strategic backlog.
+
+### Starting a Flow with Roadmap Link
+
+```bash
+/flow feature "implement user auth" --roadmap RM-001
+# or reference directly
+/flow work on RM-001
+```
+
+**When a flow references a roadmap item:**
+1. Read roadmap item for context (description, acceptance criteria)
+2. Add to plan.md:
+   ```markdown
+   ## Roadmap Reference
+   - **Item**: RM-001 (User Authentication System)
+   - **Acceptance Criteria**: [copied from roadmap item]
+   ```
+3. Update roadmap item status: planned → in-progress
+4. Add flow to roadmap item's Linked Flows section
+
+### Flow Completion with Roadmap Link
+
+When finalizing a flow that's linked to a roadmap item:
+
+1. Update roadmap item's Linked Flows with outcome
+2. Check acceptance criteria against accomplishments
+3. If all criteria met: prompt to mark roadmap item completed
+4. Update roadmap item's History section
+
+This is **required** behavior during flow finalization when a roadmap link exists.
+
 ## Context Hygiene
 
 **Use `/compact` proactively** at logical boundaries (after completing a phase, before starting a new one). Guide what to preserve:

@@ -7,6 +7,19 @@ argument-hint: [optional description of what you want to work on]
 
 You are initiating a structured development workflow. This command helps organize work with consistent documentation practices and type-specific guidance.
 
+## Step 0: Check for Roadmap Reference
+
+**If the user references a roadmap item** (e.g., `--roadmap RM-001`, `work on RM-001`, or mentions an RM-XXX ID):
+
+1. Read the roadmap item from `docs/context/roadmap/items/RM-XXX_*.md`
+2. Extract: description, acceptance criteria, priority, dependencies
+3. Use this context to inform the flow
+4. The roadmap item's description can help determine work type
+5. Later (Step 7), include Roadmap Reference section in plan.md
+6. Update roadmap item status to `in-progress` and add to its Linked Flows
+
+If no roadmap reference, proceed normally.
+
 ## Step 1: Determine Work Type
 
 **If the user provided a description (argument $1 exists):**
@@ -175,6 +188,14 @@ Create the selected documents in the context directory.
 ## Overview
 
 [Brief description of the work]
+
+## Roadmap Reference (if linked to roadmap item)
+
+- **Item**: RM-XXX ([Title])
+- **Priority**: [from roadmap item]
+- **Acceptance Criteria**:
+  - [ ] [copied from roadmap item]
+  - [ ] ...
 
 ## Goals
 

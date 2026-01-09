@@ -27,11 +27,18 @@ The `/flow` command initiates structured workflows that:
 - **`/flow-search` command** - Search past flows for context, patterns, and lessons
   - Finds relevant past work by keyword
   - Surfaces lessons learned from completed flows
+- **`/flow-roadmap` command** - Manage strategic work backlog
+  - Prioritized items with dependencies and progress tracking
+  - Subcommands: list, add, show, next, block, complete, stats
 - **`/validate` command** - Invokes multi-lens code review on your changes
 - **`validation-skill` skill** - Parallel specialist reviewers for comprehensive code review
   - 7 reviewers: security, architecture, quality, performance, scalability, testing, error-handling
   - Runs automatically before flow completion, or manually anytime via `/validate`
   - Aggregates findings by severity, auto-remediates critical/high issues
+- **`roadmap-skill` skill** - Conversational work planning
+  - Natural language: "X depends on Y", "what should I work on next?"
+  - Auto-activates when discussing priorities, dependencies, or work items
+  - Links to flows: `/flow --roadmap RM-001` connects work to strategic items
 - **`flow-skill` skill** - Auto-activates when you reference a context directory path
   - Phase-by-phase guidance: understanding → planning → implementation → completion
   - Progressive disclosure: Claude sees only what's relevant to the current phase
@@ -84,6 +91,12 @@ docs/context/
 │   ├── patterns.md
 │   ├── lessons.md
 │   └── ...
+├── roadmap/                              # Strategic work backlog
+│   ├── index.md                          # Overview and counts
+│   ├── items/                            # Individual roadmap items
+│   │   ├── RM-001_user-auth.md
+│   │   └── RM-002_api-v2.md
+│   └── archive/                          # Completed items
 ├── feature/
 │   ├── 2025-01-15_user-authentication/
 │   │   ├── plan.md
@@ -139,8 +152,10 @@ git clone https://github.com/andrasp/claude-code-flow.git
 # Commands and skills
 ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
 ln -s /path/to/claude-code-flow/commands/flow-search.md ~/.claude/commands/flow-search.md
+ln -s /path/to/claude-code-flow/commands/flow-roadmap.md ~/.claude/commands/flow-roadmap.md
 ln -s /path/to/claude-code-flow/commands/validate.md ~/.claude/commands/validate.md
 ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
+ln -s /path/to/claude-code-flow/skills/roadmap-skill ~/.claude/skills/roadmap-skill
 ln -s /path/to/claude-code-flow/skills/validation-skill ~/.claude/skills/validation-skill
 
 # Hook (optional but recommended)
@@ -186,6 +201,15 @@ Start a new conversation and the commands, skills, and hook will be available.
 # Resume previous work
 continue docs/context/feature/2025-01-15_user-auth
 
+# Manage strategic roadmap
+/flow-roadmap                              # Show overview
+/flow-roadmap list --priority=P0,P1        # List high priority items
+/flow-roadmap add "User authentication"    # Add new item
+/flow-roadmap next                         # What should I work on?
+/flow-roadmap block RM-003 "waiting specs" # Mark item blocked
+/flow-roadmap depends RM-004 --on RM-001   # Add dependency
+/flow --roadmap RM-001                     # Start flow linked to roadmap item
+
 # Review your current changes
 /validate                        # Reviews uncommitted changes
 /validate src/auth/              # Reviews specific files or directories
@@ -198,6 +222,7 @@ claude-code-flow/
 ├── commands/
 │   ├── flow.md              # /flow slash command
 │   ├── flow-search.md       # /flow-search slash command
+│   ├── flow-roadmap.md      # /flow-roadmap slash command
 │   └── validate.md          # /validate slash command
 ├── skills/
 │   ├── flow-skill/
@@ -209,6 +234,8 @@ claude-code-flow/
 │   │   ├── optimization.md  # Optimization guidance
 │   │   ├── custom.md        # General workflow, user-defined focus
 │   │   └── refactor.md      # Refactoring guidance
+│   ├── roadmap-skill/
+│   │   └── SKILL.md         # Conversational work planning
 │   └── validation-skill/
 │       ├── SKILL.md         # Orchestrates parallel reviewers
 │       └── reviewers/
