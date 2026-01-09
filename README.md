@@ -27,6 +27,11 @@ The `/flow` command initiates structured workflows that:
 - **`/flow-search` command** - Search past flows for context, patterns, and lessons
   - Finds relevant past work by keyword
   - Surfaces lessons learned from completed flows
+- **`/validate` command** - Invokes multi-lens code review on your changes
+- **`validation-skill` skill** - Parallel specialist reviewers for comprehensive code review
+  - 7 reviewers: security, architecture, quality, performance, scalability, testing, error-handling
+  - Runs automatically before flow completion, or manually anytime via `/validate`
+  - Aggregates findings by severity, auto-remediates critical/high issues
 - **`flow-skill` skill** - Auto-activates when you reference a context directory path
   - Phase-by-phase guidance: understanding → planning → implementation → completion
   - Progressive disclosure: Claude sees only what's relevant to the current phase
@@ -131,10 +136,12 @@ Clone this repo and symlink to your Claude Code configuration:
 ```bash
 git clone https://github.com/andrasp/claude-code-flow.git
 
-# Commands and skill
+# Commands and skills
 ln -s /path/to/claude-code-flow/commands/flow.md ~/.claude/commands/flow.md
 ln -s /path/to/claude-code-flow/commands/flow-search.md ~/.claude/commands/flow-search.md
+ln -s /path/to/claude-code-flow/commands/validate.md ~/.claude/commands/validate.md
 ln -s /path/to/claude-code-flow/skills/flow-skill ~/.claude/skills/flow-skill
+ln -s /path/to/claude-code-flow/skills/validation-skill ~/.claude/skills/validation-skill
 
 # Hook (optional but recommended)
 mkdir -p ~/.claude/hooks
@@ -178,6 +185,10 @@ Start a new conversation and the commands, skills, and hook will be available.
 
 # Resume previous work
 continue docs/context/feature/2025-01-15_user-auth
+
+# Review your current changes
+/validate                        # Reviews uncommitted changes
+/validate src/auth/              # Reviews specific files or directories
 ```
 
 ## Repository Structure
@@ -186,17 +197,28 @@ continue docs/context/feature/2025-01-15_user-auth
 claude-code-flow/
 ├── commands/
 │   ├── flow.md              # /flow slash command
-│   └── flow-search.md       # /flow-search slash command
+│   ├── flow-search.md       # /flow-search slash command
+│   └── validate.md          # /validate slash command
 ├── skills/
-│   └── flow-skill/
-│       ├── SKILL.md         # Main skill definition
-│       ├── bugfix.md        # Bugfix guidance
-│       ├── feature.md       # Feature development guidance
-│       ├── greenfield.md    # Greenfield project guidance
-│       ├── integration.md   # Integration guidance
-│       ├── optimization.md  # Optimization guidance
-│       ├── custom.md        # General workflow, user-defined focus
-│       └── refactor.md      # Refactoring guidance
+│   ├── flow-skill/
+│   │   ├── SKILL.md         # Main skill definition
+│   │   ├── bugfix.md        # Bugfix guidance
+│   │   ├── feature.md       # Feature development guidance
+│   │   ├── greenfield.md    # Greenfield project guidance
+│   │   ├── integration.md   # Integration guidance
+│   │   ├── optimization.md  # Optimization guidance
+│   │   ├── custom.md        # General workflow, user-defined focus
+│   │   └── refactor.md      # Refactoring guidance
+│   └── validation-skill/
+│       ├── SKILL.md         # Orchestrates parallel reviewers
+│       └── reviewers/
+│           ├── security.md      # Vulnerabilities, injection, auth
+│           ├── architecture.md  # Design patterns, coupling, layers
+│           ├── quality.md       # Duplication, naming, complexity
+│           ├── performance.md   # Algorithms, queries, bottlenecks
+│           ├── scalability.md   # Concurrency, state, distributed
+│           ├── testing.md       # Coverage, test quality, edge cases
+│           └── error-handling.md # Robustness, graceful degradation
 └── hooks/
     ├── README.md             # Hook technical documentation
     └── detect-workflow.py    # Auto-detect work type from prompts

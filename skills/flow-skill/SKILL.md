@@ -154,7 +154,13 @@ If `.memory/` doesn't exist yet, skip this step - it will be created during your
 - Update tasks.md as work progresses
 - **Update outcome.md after each significant change** - add to "Changes Made", note any patterns/gotchas discovered
 - Maintain quality standards
-- Run self-review before completion
+- Run validation loop before completion:
+  1. Run `/validate` to get multi-lens review
+  2. Fix issues based on reviewer feedback
+  3. Repeat steps 1-2 until no Critical/High issues remain
+  4. For Medium/Low issues, ask user whether to address or defer
+
+See [Validation](#validation) for details.
 
 **→ Validate with user:** Does implementation match the plan? Any drift detected?
 
@@ -246,19 +252,26 @@ Level 3: Final synthesis
 
 **Note:** Subagents don't need the flow skill. They're workers executing focused tasks. The main session is the orchestrator that follows flow and coordinates the subagents.
 
-## Self-Review
+## Validation
 
-Before completing significant implementation work, spawn a review agent to check for issues:
+Before completing implementation, run multi-lens validation to catch issues across different dimensions.
 
-```
-Launch a Task agent to review the changes:
-- Check consistency with codebase patterns
-- Look for missing error handling or edge cases
-- Verify implementation matches the plan
-- Return a summary of any issues found
-```
+**Manual:** User invokes `/validate` at any time.
 
-The review agent runs in fresh context, bringing objective perspective. This catches drift before it compounds.
+**Automatic:** At the end of Phase 3 (Implementation), before transitioning to Completion.
+
+The validation skill spawns parallel reviewer subagents, each examining changes through a different lens:
+- **Security** - Vulnerabilities, injection, auth issues
+- **Architecture** - Design patterns, coupling, layer violations
+- **Quality** - Duplication, naming, complexity, CLAUDE.md compliance
+- **Performance** - Algorithms, queries, bottlenecks
+- **Scalability** - Concurrency, state, distributed concerns
+- **Testing** - Coverage, test quality, edge cases
+- **Error Handling** - Robustness, graceful degradation
+
+Results are aggregated by severity (Critical > High > Medium > Low). Critical issues block completion; High issues are recommended fixes; Medium/Low are advisory.
+
+See `/validate` command and `skills/validation-skill/` for implementation details.
 
 ## Context Hygiene
 
