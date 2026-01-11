@@ -33,7 +33,7 @@ Break work into tasks in `tasks.md`:
 
 Execute systematically, updating progress as you go.
 
-## Phase 4: Completion
+## Phase 5: Completion
 
 Document results in `outcome.md`:
 - What was accomplished

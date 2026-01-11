@@ -46,7 +46,7 @@ Determine:
 - Are there database changes required?
 - What state management is involved?
 
-Document findings in `research.md`.
+Document findings in `research.md` (if selected).
 
 ## Phase 2: Planning
 
@@ -58,7 +58,7 @@ Consider:
 - Error handling approach
 
 ### 2.2 Break Down Tasks
-Create granular tasks in `tasks.md`:
+Create granular tasks in `tasks.md` (if selected):
 - Each task should be completable in one session
 - Order by dependencies
 - Be specific to the actual feature, not generic checklists
@@ -92,21 +92,21 @@ Define interfaces and types first:
 - Add integration tests
 - Handle error states
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Quality Checks
+### 5.1 Quality Checks
 - [ ] All tests passing
 - [ ] Code follows existing patterns
 - [ ] No linting errors
 - [ ] Accessibility verified (if UI)
 - [ ] Performance acceptable
 
-### 4.2 Documentation
+### 5.2 Documentation
 - Update relevant documentation
 - Add inline comments for complex logic
 - Update API docs if applicable
 
-### 4.3 Record Outcome
+### 5.3 Record Outcome
 Fill in `outcome.md`:
 - What was built
 - Key decisions made

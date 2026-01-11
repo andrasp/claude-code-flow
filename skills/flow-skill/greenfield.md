@@ -125,22 +125,22 @@ For greenfield, establish testing patterns early:
 - Integration tests for connections
 - End-to-end tests for critical paths
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Documentation
+### 5.1 Documentation
 Greenfield requires comprehensive docs:
 - Architecture overview
 - Setup instructions
 - API documentation
 - Operational runbook
 
-### 4.2 Knowledge Transfer
+### 5.2 Knowledge Transfer
 Ensure others can work on it:
 - Code is self-documenting
 - Complex areas have comments
 - Design decisions are recorded
 
-### 4.3 Record Outcome
+### 5.3 Record Outcome
 Document in `outcome.md`:
 - What was built
 - Architecture decisions and rationale

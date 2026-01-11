@@ -191,11 +191,10 @@ Use the Write tool to create the directory by creating the first file.
 Use the AskUserQuestion tool (with multiSelect enabled) to ask which optional documents to create:
 
 ```
-Which documents do you want? (plan.md is always created)
+Which additional documents do you want? (plan.md and outcome.md are always created)
 
 - research.md - For capturing analysis and findings
 - tasks.md - For tracking progress with checkboxes
-- outcome.md - For recording results when done
 ```
 
 ## Step 7: Initialize Documents
@@ -271,24 +270,24 @@ Create the selected documents in the context directory.
 [Completed items will be moved here]
 ```
 
-### outcome.md (If selected)
+### outcome.md (Always created)
 ```markdown
-# [Topic] Outcome
+# Outcome
 
-**Plan:** [plan.md](./plan.md)
-**Completed:** [Date when finished]
+## Status
+🟡 In Progress
 
 ## Summary
-
-[What was accomplished]
+[To be filled as work progresses]
 
 ## Changes Made
+[Updated incrementally during implementation]
 
-[List of files/components changed]
+## Learnings Extracted
+[Filled during finalization]
 
-## Lessons Learned
-
-[What we learned for future work]
+## Next Steps
+[Discovered during implementation]
 ```
 
 ## Step 8: Begin Workflow

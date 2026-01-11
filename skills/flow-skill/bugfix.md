@@ -128,21 +128,21 @@ Ask:
 - Are there similar patterns to check?
 - Should we add defensive code?
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Documentation
+### 5.1 Documentation
 If the bug was user-facing:
 - Update release notes
 - Consider user communication
 - Update known issues if applicable
 
-### 4.2 Post-Mortem
+### 5.2 Post-Mortem
 For significant bugs, document:
 - How did this bug get introduced?
 - Why wasn't it caught by tests?
 - How can we prevent similar bugs?
 
-### 4.3 Record Outcome
+### 5.3 Record Outcome
 Document in `outcome.md`:
 ```markdown
 ## Bug: [Brief description]

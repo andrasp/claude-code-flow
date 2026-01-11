@@ -117,7 +117,9 @@ Create `outcome.md` at flow start with this structure:
 
 ## Workflow Phases
 
-All work types follow this general structure with human validation at each boundary:
+All work types follow this general structure:
+
+**Note on autonomous mode:** When running autonomously, references to "user feedback," "check in with the user," or "validate with user" should be interpreted as consulting the Oversight Agent instead. See the autonomous-skill for decision-making guidance.
 
 ### Phase 1: Understanding
 
@@ -136,7 +138,7 @@ If `.memory/` doesn't exist yet, skip this step - it will be created during your
 **Then explore:**
 - Clarify requirements and scope
 - Explore relevant codebase areas (use hierarchical exploration for large codebases)
-- Document findings in research.md
+- Document findings in research.md (if selected)
 
 **Also create outcome.md** with the standard template at this point.
 
@@ -145,26 +147,32 @@ If `.memory/` doesn't exist yet, skip this step - it will be created during your
 ### Phase 2: Planning
 - Define approach and architecture
 - Break down into tasks
-- Document in plan.md and tasks.md
+- Document in plan.md and tasks.md (if selected)
 
-**→ Validate with user:** Does this plan match intent? Does it fit the architecture?
+*Iterative: refine with user feedback until the plan is solid.*
 
 ### Phase 3: Implementation
-- Execute tasks systematically
-- Update tasks.md as work progresses
+- Execute the plan systematically
+- Update tasks.md (if selected) as work progresses
 - **Update outcome.md after each significant change** - add to "Changes Made", note any patterns/gotchas discovered
 - Maintain quality standards
-- Run validation loop before completion:
-  1. Run `/validate` to get multi-lens review
-  2. Fix issues based on reviewer feedback
-  3. Repeat steps 1-2 until no Critical/High issues remain
-  4. For Medium/Low issues, ask user whether to address or defer
+
+*Iterative: check in with the user at logical boundaries.*
+
+### Phase 4: Validation
+
+Validation is a distinct phase, not a one-time check. It automatically triggers after implementation:
+
+1. Run multi-lens review (7 parallel reviewers)
+2. Fix Critical/High issues based on reviewer feedback
+3. Repeat steps 1-2 until no Critical/High issues remain
+4. For Medium/Low issues, ask user whether to address or defer
 
 See [Validation](#validation) for details.
 
-**→ Validate with user:** Does implementation match the plan? Any drift detected?
+*Loop until clean or user overrides.*
 
-### Phase 4: Completion
+### Phase 5: Completion
 
 **Finalize outcome.md:**
 - Verify success criteria met
@@ -330,6 +338,13 @@ This is **required** behavior during flow finalization when a roadmap link exist
 **Lazy prompting:** Quality degrades when you stop putting effort into prompts. If you're getting poor output, reflect on what context you're actually providing.
 
 ## Type-Specific Guidance
+
+The work type files provide **additive guidance** for specific work types. They do not override the phases and principles defined in this skill - they supplement them.
+
+**How to read work type files:**
+- If a work type file mentions a phase, apply that guidance **in addition to** the general phase guidance above
+- If a work type file omits a phase, use the general guidance from this skill
+- Universal aspects (iterative nature, validation loop, memory extraction) always apply regardless of work type
 
 For detailed guidance on each work type, see:
 - [Greenfield Projects](greenfield.md)

@@ -169,20 +169,20 @@ For system-wide changes:
 - Use feature flags if needed
 - Plan for extended timeline
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Verification
+### 5.1 Verification
 - All tests pass
 - Manual smoke testing
 - Performance benchmarks (if applicable)
 - Review for missed cleanup
 
-### 4.2 Documentation Updates
+### 5.2 Documentation Updates
 - Update architecture docs
 - Remove obsolete documentation
 - Add migration notes if APIs changed
 
-### 4.3 Record Outcome
+### 5.3 Record Outcome
 Document in `outcome.md`:
 - What was refactored and why
 - Before/after comparison

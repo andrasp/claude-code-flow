@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A structured workflow system for Claude Code. Guides you through feature development, refactoring, optimization, greenfield projects, and bugfixes with consistent documentation practices.
+A structured workflow system for Claude Code. Guides you through feature development, refactoring, optimization, greenfield projects, integrations, and bugfixes with consistent documentation practices.
 
 Extends the research → plan → implement paradigm, keeping Claude laser focused on relevant context while solving the chronic amnesia problem in long sessions.
 
@@ -15,24 +15,25 @@ The `/flow` command initiates structured workflows that:
 - **Defeat Claude's amnesia** - context persists in documentation that survives session resets, context compaction, and timeouts
 - **Resume instantly** - reference a `docs/context/` path and pick up exactly where you left off, even days later
 - **Learn from past work** - patterns, lessons, and gotchas accumulate in `.memory/` and inform future flows
-- **Stay on track** - phased workflows (understand → plan → implement → complete) with validation checkpoints prevent drift
+- **Stay on track** - phased workflows (understand → plan → implement → validate → complete) prevent drift
 - **Get tailored guidance** - type-specific workflows for features, bugfixes, refactors, integrations, and more
 - **Reduce cognitive load** - Claude explores your codebase first, only asking questions when genuinely blocked
+- **Scale to large codebases** - hierarchical exploration delegates heavy reading to subagents, keeping your main session focused
 
 
 ## Core Workflow
 
 ### How It Works
 
-Every flow follows the same phased structure with human validation at each boundary:
+Every flow follows the same phased structure:
 
-1. **Research** - Explore the codebase, read documentation, search the web, check databases - whatever sources are relevant. Trace data flows, identify integration points, understand existing patterns. Ask questions when genuine ambiguity remains. Document findings in `research.md`.
+1. **Understanding** - Explore the codebase, read documentation, search the web, check databases - whatever sources are relevant. Trace data flows, identify integration points, understand existing patterns. Ask questions when genuine ambiguity remains. Document findings in `research.md` (if selected).
 
-2. **Planning** - Define the implementation approach based on what you learned. Break work into concrete tasks with clear acceptance criteria. Document in `plan.md` (goals, approach, success criteria) and `tasks.md` (checkboxes for tracking).
+2. **Planning** - Define the implementation approach based on what you learned. Break work into concrete tasks with clear acceptance criteria. Document in `plan.md` and `tasks.md` (if selected). *Iterative: refine with user feedback until the plan is solid.*
 
-3. **Implementation** - Execute tasks one by one, updating `tasks.md` as you go. Follow established codebase patterns. Keep changes focused - don't refactor unrelated code.
+3. **Implementation** - Execute the plan, updating `tasks.md` (if selected) as you go. Follow established codebase patterns. Keep changes focused - don't refactor unrelated code. *Iterative: check in with the user at logical boundaries.*
 
-4. **Review-Improve Loop** - Run `/validate` to trigger 7 parallel reviewers (security, architecture, quality, performance, scalability, testing, error-handling). Fix Critical/High issues and revalidate. Loop until clean or user overrides.
+4. **Validation** - Automatically triggers 7 parallel reviewers (security, architecture, quality, performance, scalability, testing, error-handling). Fix Critical/High issues, then revalidate. *Loop until clean or user overrides.* This is a distinct phase, not a one-time check.
 
 5. **Completion** - Verify all success criteria are met. Document results in `outcome.md` including what was accomplished, files changed, and lessons learned. Extract patterns and insights to `.memory/` for future flows.
 
@@ -50,22 +51,29 @@ Every flow follows the same phased structure with human validation at each bound
 
 ### Context Directory
 
-Each workflow creates a timestamped directory with standardized documents:
+Each workflow creates a timestamped directory. You choose which optional documents to include:
 
 ```
 docs/context/
 ├── .memory/                              # Cross-session learning (see Memory System)
-├── roadmap/                              # Strategic backlog (see Roadmap)
+├── roadmap/                              # Strategic backlog (see Roadmap extension)
 ├── feature/
 │   └── 2025-01-15_user-authentication/
-│       ├── plan.md                       # Goals, approach, success criteria
-│       ├── research.md                   # Analysis and findings
-│       ├── tasks.md                      # Progress tracking
-│       └── outcome.md                    # Results and lessons
+│       ├── research.md                   # Analysis and findings (optional)
+│       ├── plan.md                       # Goals, approach, success criteria (always created)
+│       ├── tasks.md                      # Progress tracking (optional)
+│       └── outcome.md                    # Results and lessons (always created)
+├── greenfield/
+├── integration/
 ├── bugfix/
+├── refactor/
 ├── optimization/
-└── refactor/
+└── custom/
 ```
+
+**Visual interface available:** [Claude Code Flow UI](https://github.com/andrasp/claude-code-flow-ui) provides a desktop app for browsing flows and their documentation.
+
+![Flow Detail](https://raw.githubusercontent.com/andrasp/claude-code-flow-ui/main/assets/screenshots/flow-detail.png)
 
 ### Auto-Activation
 
@@ -77,14 +85,14 @@ Two mechanisms ensure guidance is always available:
 
 ### Searching Past Work
 
-Find relevant context from previous flows:
+Find relevant context from previous flows and accumulated memory:
 
 ```bash
 /flow-search authentication
 /flow-search "caching patterns"
 ```
 
-Returns matching flows with their goals, outcomes, and lessons learned. Useful for checking "have I done this before?" or finding patterns to reuse. You can dive deeper into any result or resume a previous flow directly.
+Searches both past flows (goals, outcomes, lessons) and `.memory/` (patterns, gotchas, conventions). Useful for checking "have I done this before?" or finding patterns to reuse. You can dive deeper into any result or resume a previous flow directly.
 
 ### Memory System
 
@@ -104,7 +112,11 @@ docs/context/.memory/
 - **Flow end**: Lessons and patterns are extracted to `.memory/` for future flows
 - **Invisible**: You don't manage it directly; Claude reads/writes automatically
 
-The memory is project-specific and should be gitignored.
+The memory is project-specific. Committing it to version control shares accumulated knowledge across the team, though concurrent flows may cause merge conflicts in memory files.
+
+**Visual interface available:** [Claude Code Flow UI](https://github.com/andrasp/claude-code-flow-ui) provides a desktop app for exploring accumulated memory.
+
+![Memory Explorer](https://raw.githubusercontent.com/andrasp/claude-code-flow-ui/main/assets/screenshots/memory.png)
 
 ## Validation
 
@@ -119,7 +131,7 @@ Multi-lens code review through **parallel specialist reviewers**, each examining
 | Reviewer | Focus |
 |----------|-------|
 | Security | Vulnerabilities, injection, auth issues |
-| Architecture | Design patterns, coupling, layer violations |
+| Architecture | Design patterns, coupling, layer violations, CLAUDE.md compliance |
 | Quality | Duplication, naming, complexity, CLAUDE.md compliance |
 | Performance | Algorithms, queries, bottlenecks |
 | Scalability | Concurrency, state, distributed concerns |
@@ -175,6 +187,12 @@ Strategic work planning above individual flows. While `/flow` manages isolated p
 Natural language works too: "X depends on Y", "what's most important?", "the API work is blocked".
 
 Roadmap items live in `docs/context/roadmap/` with priorities (P0-P3), effort estimates (XS-XL), dependencies, and acceptance criteria. When flows complete, linked roadmap items update automatically.
+
+**Visual interface available:** [Claude Code Flow UI](https://github.com/andrasp/claude-code-flow-ui) provides a desktop app with Kanban board and timeline views for roadmap planning.
+
+![Roadmap Board](https://raw.githubusercontent.com/andrasp/claude-code-flow-ui/main/assets/screenshots/roadmap-board.png)
+
+![Roadmap Timeline](https://raw.githubusercontent.com/andrasp/claude-code-flow-ui/main/assets/screenshots/roadmap-timeline.png)
 
 ## Usage
 

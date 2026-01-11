@@ -190,9 +190,9 @@ After each change:
 - Verify UX is acceptable
 ```
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Final Benchmarks
+### 5.1 Final Benchmarks
 Run complete benchmark suite:
 ```markdown
 ## Final Measurements
@@ -203,12 +203,12 @@ Run complete benchmark suite:
 | Memory usage | 2GB | <500MB | 400MB | 80% |
 ```
 
-### 4.2 Verify No Regressions
+### 5.2 Verify No Regressions
 - All functionality tests pass
 - No unexpected side effects
 - Other metrics stable
 
-### 4.3 Document Optimizations
+### 5.3 Document Optimizations
 Update `outcome.md`:
 - Summary of improvements achieved
 - Each optimization and its impact

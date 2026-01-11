@@ -151,9 +151,9 @@ For each external call:
 - End-to-end test with real system
 - Verify in production-like environment
 
-## Phase 4: Completion
+## Phase 5: Completion
 
-### 4.1 Documentation
+### 5.1 Documentation
 
 Document:
 - How to configure the integration
@@ -161,7 +161,7 @@ Document:
 - How to test locally
 - Troubleshooting common issues
 
-### 4.2 Monitoring and Alerting
+### 5.2 Monitoring and Alerting
 
 Consider:
 - Logging for debugging
@@ -169,7 +169,7 @@ Consider:
 - Alerts for failures
 - Dashboard for visibility
 
-### 4.3 Record Outcome
+### 5.3 Record Outcome
 
 Document in `outcome.md`:
 ```markdown
