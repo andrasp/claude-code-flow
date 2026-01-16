@@ -28,13 +28,13 @@ When the user references a context path:
 
 | Work Type | Directory Pattern | Guidance |
 |-----------|-------------------|----------|
-| Greenfield | `docs/context/greenfield/` | [greenfield.md](greenfield.md) |
-| Feature | `docs/context/feature/` | [feature.md](feature.md) |
-| Integration | `docs/context/integration/` | [integration.md](integration.md) |
-| Refactor | `docs/context/refactor/` | [refactor.md](refactor.md) |
-| Optimization | `docs/context/optimization/` | [optimization.md](optimization.md) |
-| Bugfix | `docs/context/bugfix/` | [bugfix.md](bugfix.md) |
-| Custom | `docs/context/custom/` | [custom.md](custom.md) |
+| Greenfield | `docs/context/greenfield/` | [types/greenfield.md](types/greenfield.md) |
+| Feature | `docs/context/feature/` | [types/feature.md](types/feature.md) |
+| Integration | `docs/context/integration/` | [types/integration.md](types/integration.md) |
+| Refactor | `docs/context/refactor/` | [types/refactor.md](types/refactor.md) |
+| Optimization | `docs/context/optimization/` | [types/optimization.md](types/optimization.md) |
+| Bugfix | `docs/context/bugfix/` | [types/bugfix.md](types/bugfix.md) |
+| Custom | `docs/context/custom/` | [types/custom.md](types/custom.md) |
 
 ## Searching Past Flows
 
@@ -223,42 +223,16 @@ A flow is not properly complete if the "Learnings Extracted" section is missing 
 Bad: "What are the requirements? What patterns exist? What files are involved?"
 Good: *Explore the codebase first, then* "I found X and Y patterns. Should we follow X or try something new?"
 
-## Hierarchical Exploration
+## Techniques
 
-For large codebases, use subagents in a hierarchical rollup pattern. This preserves main session context while still reaching low-level code details.
+Reusable techniques that apply across work types and phases:
 
-**Why delegate:** Your main session is an orchestrator, not a workhorse. Reading 15 files directly costs ~80K tokens. A subagent reading those files and returning a summary costs ~5K tokens in your main session.
+| Technique | When to Use | Reference |
+|-----------|-------------|-----------|
+| **Hierarchical Exploration** | Large codebases, understanding patterns across modules | [techniques/hierarchical-exploration.md](techniques/hierarchical-exploration.md) |
+| **State Machine Diagrams** | Components with multiple states, cross-system flows, design or verification | [techniques/state-machines.md](techniques/state-machines.md) |
 
-**The pattern:**
-
-```
-Level 1: Parallel exploration subagents
-├── Subagent A: Explore auth module → returns summary
-├── Subagent B: Explore API routes → returns summary
-├── Subagent C: Explore data layer → returns summary
-└── Subagent D: Explore UI components → returns summary
-
-Level 2: Synthesis subagents (if needed)
-├── Subagent E: Combine A + B findings → architectural summary
-└── Subagent F: Combine C + D findings → data flow summary
-
-Level 3: Final synthesis
-└── Main session: Integrate all summaries into coherent understanding
-```
-
-**When to use hierarchical exploration:**
-- Codebase has many files across multiple modules
-- You need to understand patterns across different areas
-- Direct file reading would consume too much context
-
-**How to delegate:**
-- Use Task agents or Explore agents for heavy reading
-- Give each agent a focused scope (one module, one concern)
-- Request summaries, not raw file dumps
-- Run independent explorations in parallel
-- If context matters, include relevant plan details in the prompt or tell the agent to read plan.md
-
-**Note:** Subagents don't need the flow skill. They're workers executing focused tasks. The main session is the orchestrator that follows flow and coordinates the subagents.
+These techniques help manage context and force comprehensive thinking. Apply them proactively when the situation calls for it.
 
 ## Validation
 
@@ -347,10 +321,10 @@ The work type files provide **additive guidance** for specific work types. They 
 - Universal aspects (iterative nature, validation loop, memory extraction) always apply regardless of work type
 
 For detailed guidance on each work type, see:
-- [Greenfield Projects](greenfield.md)
-- [Feature Development](feature.md)
-- [Integration](integration.md)
-- [Refactoring](refactor.md)
-- [Optimization](optimization.md)
-- [Bugfix](bugfix.md)
-- [Custom](custom.md)
+- [Greenfield Projects](types/greenfield.md)
+- [Feature Development](types/feature.md)
+- [Integration](types/integration.md)
+- [Refactoring](types/refactor.md)
+- [Optimization](types/optimization.md)
+- [Bugfix](types/bugfix.md)
+- [Custom](types/custom.md)

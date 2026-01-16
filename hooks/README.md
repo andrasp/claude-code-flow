@@ -18,6 +18,7 @@ A `UserPromptSubmit` hook that analyzes user prompts and injects workflow-specif
    - `feature` — add, implement, create, build, new feature, etc.
    - `greenfield` — new project, from scratch, bootstrap, scaffold, etc.
    - `integration` — integrate, connect, API, webhook, third-party, etc.
+   - `state_machine` — state machine, state diagram, lifecycle, design component/system/flow, transitions, etc.
 
 3. **Output**: Returns JSON that injects guidance into Claude's context:
    ```json

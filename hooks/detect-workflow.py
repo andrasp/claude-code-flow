@@ -89,6 +89,18 @@ def detect_work_types(prompt: str) -> list[str]:
             r"\benable\b",
             r"\bintroduc(e|ing)\b",
         ],
+        "state_machine": [
+            r"\bstate machine\b",
+            r"\bstate diagram\b",
+            r"\bstates and transitions\b",
+            r"\blifecycle states?\b",
+            r"\bdesign(ing)? (a |the )?(new )?(component|system|flow)\b",
+            r"\bcross[- ]system flow\b",
+            r"\bflow diagram\b",
+            r"\bsequence diagram\b",
+            r"\bmap(ping)? (out )?(all )?(the )?states\b",
+            r"\btransition(s| diagram)\b",
+        ],
     }
 
     matched_types = []
@@ -112,7 +124,7 @@ def get_guidance_context(work_type: str) -> str:
 - Verify the fix doesn't introduce regressions
 - Consider: could this bug exist elsewhere?
 
-Reference: flow-skill/bugfix.md for detailed guidance.""",
+Reference: flow-skill/types/bugfix.md for detailed guidance.""",
 
         "refactor": """Apply REFACTOR guidance for this work:
 - Behavior preservation is paramount - no functional changes
@@ -121,7 +133,7 @@ Reference: flow-skill/bugfix.md for detailed guidance.""",
 - Don't refactor and add features simultaneously
 - Ensure adequate test coverage before risky refactors
 
-Reference: flow-skill/refactor.md for detailed guidance.""",
+Reference: flow-skill/types/refactor.md for detailed guidance.""",
 
         "optimization": """Apply OPTIMIZATION guidance for this work:
 - Measure first - establish baseline before optimizing
@@ -130,7 +142,7 @@ Reference: flow-skill/refactor.md for detailed guidance.""",
 - Verify improvements with benchmarks
 - 80/20 rule: focus on biggest impact first
 
-Reference: flow-skill/optimization.md for detailed guidance.""",
+Reference: flow-skill/types/optimization.md for detailed guidance.""",
 
         "feature": """Apply FEATURE development guidance for this work:
 - Explore existing patterns before writing new code
@@ -139,7 +151,7 @@ Reference: flow-skill/optimization.md for detailed guidance.""",
 - Consider edge cases and error handling
 - Write tests alongside implementation
 
-Reference: flow-skill/feature.md for detailed guidance.""",
+Reference: flow-skill/types/feature.md for detailed guidance.""",
 
         "integration": """Apply INTEGRATION guidance for this work:
 - Understand the external system first (docs, API contracts)
@@ -148,7 +160,7 @@ Reference: flow-skill/feature.md for detailed guidance.""",
 - Test at boundaries with both mocked and real calls
 - Handle auth, rate limiting, and schema changes
 
-Reference: flow-skill/integration.md for detailed guidance.""",
+Reference: flow-skill/types/integration.md for detailed guidance.""",
 
         "greenfield": """Apply GREENFIELD project guidance for this work:
 - Requirements first - clarify what success looks like
@@ -157,7 +169,18 @@ Reference: flow-skill/integration.md for detailed guidance.""",
 - Build for change - avoid premature optimization
 - Set up infrastructure: testing, CI, documentation
 
-Reference: flow-skill/greenfield.md for detailed guidance.""",
+Reference: flow-skill/types/greenfield.md for detailed guidance.""",
+
+        "state_machine": """Apply STATE MACHINE THINKING for this work:
+- Create explicit state machine diagrams for components with multiple states or cross-system flows
+- Identify ALL possible states, not just the happy path
+- Map EVERY transition: what triggers it? what are the preconditions?
+- Look for: unreachable states, missing error transitions, ambiguous conditions
+- Use for design (before implementation), understanding (existing code), and verification (after implementation)
+
+This forces comprehensive thinking and exposes gaps that linear reasoning misses.
+
+Reference: flow-skill/techniques/state-machines.md for detailed guidance.""",
     }
 
     return guidance_map.get(work_type, "")

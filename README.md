@@ -233,13 +233,17 @@ claude-code-flow/
 ├── skills/
 │   ├── flow-skill/          # Core workflow guidance
 │   │   ├── SKILL.md
-│   │   ├── bugfix.md
-│   │   ├── feature.md
-│   │   ├── greenfield.md
-│   │   ├── integration.md
-│   │   ├── optimization.md
-│   │   ├── refactor.md
-│   │   └── custom.md
+│   │   ├── types/           # Work type guidance
+│   │   │   ├── bugfix.md
+│   │   │   ├── feature.md
+│   │   │   ├── greenfield.md
+│   │   │   ├── integration.md
+│   │   │   ├── optimization.md
+│   │   │   ├── refactor.md
+│   │   │   └── custom.md
+│   │   └── techniques/      # Reusable techniques
+│   │       ├── hierarchical-exploration.md
+│   │       └── state-machines.md
 │   ├── roadmap-skill/       # Strategic planning
 │   │   └── SKILL.md
 │   ├── validation-skill/    # Multi-lens code review
